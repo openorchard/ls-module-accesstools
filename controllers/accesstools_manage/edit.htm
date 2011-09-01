@@ -1,0 +1,72 @@
+<? Phpr_View::beginBlock("head") ?>
+	<script type="text/javascript" src="modules/backend/resources/javascript/unload_manager.js"></script>
+	<link rel="stylesheet" href="modules/cms/resources/css/resources.css?<?= module_build('cms') ?>" type="text/css"/>
+	<script type="text/javascript" src="phproad/thirdpart/codemirror/js/codemirror.js?<?= module_build('core') ?>"></script>
+	<script type="text/javascript" src="phproad/modules/db/behaviors/db_formbehavior/resources/javascript/codemirror_wrapper.js?<?= module_build('core') ?>"></script>
+	<script type="text/javascript" src="modules/cms/resources/javascript/fileedit.js"></script>
+
+	<script type="text/javascript">
+		UnloadManager.unload_message = 'The file content has been changed. Unsaved data will be lost.';
+	</script>
+<? Phpr_View::endBlock() ?>
+
+<? Phpr_View::beginBlock("view") ?>
+	<ul class="breadcrumbs">
+		<li><a href="<?= url('system/settings') ?>">Settings</a></li>
+		<li><a href="<?= url('accesstools/manage') ?>">Access Tools</a></li>
+		<li><?= $this->app_page_title ?></li>
+	</ul>
+	<div class="clear"></div>
+	
+	<? if (!isset($fatalError)): ?>
+	
+		<div class="scoreboardReport">
+			<ul>
+				<li class="last">
+					<p><?= $data[$filename]['file_name'] ?></p>
+					<p class="description">
+					<?= $data[$filename]['description'] ?>
+					</p>
+				</li>
+			</ul>
+			<div class="clear"></div>
+		</div>
+	
+	<?= flash() ?>
+	
+	<?= Phpr_Form::openTag() ?>
+		<div class="form">
+			<!--[if IE]><fieldset class="ie_fix"><![endif]-->
+			<div class="formFlash"></div>
+			<!--[if IE]></fieldset><![endif]-->
+	
+			<ul class="formElements">
+				<li class="field code_editor full">
+					<div class="fieldContainer code">
+						<div class="code_wrapper">
+							<textarea class="giant" id="file_content" name="file_content"><?= h($file_contents) ?></textarea>
+							<script type="text/javascript">
+								window.addEvent('domready', function(){
+		//						if (!Browser.Engine.trident)
+		//						init_edit_area('file_content', '<?= $ext ?>', 'save_file');
+									init_codemirror('file_content', '<?= $ext ?>', 'save_file');
+								});
+							</script>	
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="clear"></div>
+		</div>
+	
+		<?= backend_ajax_button('Save', 'edit_onSave', array('class'=>"left"), "prepareFunction: function(){phprTriggerSave();}, extraFields: {redirect: 0}, loadIndicator: {hideOnSuccess: true}, onSuccess: function(){UnloadManager.reset_changes()}") ?>
+		<?= backend_ajax_button('Save and Close', 'edit_onSave', array('class'=>"left"), "prepareFunction: function(){phprTriggerSave();}, onBeforeScriptEval: function(){UnloadManager.reset_changes()}") ?>	
+		<?= backend_ajax_button('Close', 'edit_onCancel', array('class'=>"left"), "onBeforeScriptEval: function(){UnloadManager.reset_changes()}") ?>
+		<div class="clear"></div>
+	</form>
+				
+	<? else: ?>
+	<br/>
+	<?= flash() ?>
+	<? endif ?>
+<? Phpr_View::endBlock() ?>

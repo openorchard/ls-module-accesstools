@@ -1,0 +1,33 @@
+<? Phpr_View::beginBlock("head") ?>
+	<link rel="stylesheet" href="phproad/modules/db/behaviors/db_listbehavior/resources/css/list.css?<?= module_build('core') ?>" type="text/css"/>
+<? Phpr_View::endBlock() ?>
+
+<? Phpr_View::beginBlock("view") ?>
+	<ul class="breadcrumbs">
+		<li><a href="<?= url('system/settings') ?>">Settings</a></li>
+		<li><?= $this->app_page_title ?></li>
+	</ul>
+	
+	<?= flash() ?>
+	
+	<table class="simpleList full_width">
+		<thead>
+			<tr>
+				<th class="current" style="width:140px;">File</th>
+				<th class=>Description</th>
+				<th class="last">Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			<? foreach ($data as $index => $page):
+				$url = url('accesstools/manage/edit/'.$index);
+			?>
+				<tr class="<?= zebra('even') ?>"  onClick="click_url('<?= $url ?>')">
+					<td class="current text link"><a href="<?= $url ?>"><?= $page['file_name'] ?></a></td>
+					<td class="text link"><a href="<?= $url ?>"><?= $page['description'] ?></a></td>
+					<td class="last text link"><a href="<?= $url ?>"><?= $page['status'] ?></a></td>
+				</tr>
+			<? endforeach ?>
+		</tbody>
+	</table>
+<? Phpr_View::endBlock() ?>
